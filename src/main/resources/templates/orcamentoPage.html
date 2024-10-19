@@ -1,0 +1,123 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Orçamentos</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: #6a1b9a;
+            color: #000000;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            text-align: left;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #6a1b9a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #7b1fa2;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #000000;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<h1>Cadastro de Orçamentos</h1>
+<form id="orcamentoForm" th:action="@{/orcamentos}" th:object="${orcamentoModel}" method="post">
+    <label>Valor do Orçamento</label>
+    <input type="number" th:field="*{valorOrcamento}" required step="0.01" min="0"/><br/>
+
+    <label>Estado do ICMS</label>
+    <select th:field="*{icmsEstados}" required>
+        <option value="">Selecione um estado</option>
+        <option value="ICMS_MG">Minas Gerais</option>
+        <option value="ICMS_SP">São Paulo</option>
+        <option value="ICMS_RJ">Rio de Janeiro</option>
+    </select><br/>
+
+    <button id="salvarOrcamento" type="submit">Salvar</button>
+</form>
+
+<h2>Orçamentos Cadastrados</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Valor do Orçamento</th>
+        <th>ICMS</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="orcamento : ${orcamentos}">
+        <td th:text="${orcamento.id}"></td>
+        <td th:text="${orcamento.valorOrcamento}"></td>
+        <td th:text="${orcamento.valorICMS}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    document.getElementById("orcamentoForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Impede o envio padrão do formulário
+
+        var form = event.target;
+        var formData = new FormData(form);
+
+        fetch(form.action, {
+            method: form.method,
+            body: formData
+        }).then(response => {
+            if (response.ok) {
+                window.location.href = "/orcamentos"; // Redireciona após o sucesso
+                alert("Orçamento salvo com sucesso!");
+            } else {
+                console.error("Erro ao salvar o orçamento");
+                alert("Erro ao salvar o orçamento");
+            }
+        }).catch(error => {
+            console.error("Erro ao salvar o orçamento", error);
+            alert("Erro ao salvar o orçamento");
+        });
+    });
+</script>
+</body>
+</html>
