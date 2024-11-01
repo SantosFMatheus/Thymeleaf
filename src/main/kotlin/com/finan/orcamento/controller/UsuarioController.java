@@ -1,7 +1,6 @@
 package com.finan.orcamento.controller;
 
 import com.finan.orcamento.model.UsuarioModel;
-import com.finan.orcamento.repositories.UsuarioRepository;
 import com.finan.orcamento.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,10 +14,9 @@ import java.util.List;
 @Controller
 @RequestMapping("/usuarios")
 public class UsuarioController {
+
     @Autowired
     private UsuarioService usuarioService;
-    @Autowired
-    private UsuarioRepository usuarioRepository;
 
     @GetMapping
     public String getUsuarioPage(Model model) {
@@ -28,15 +26,16 @@ public class UsuarioController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UsuarioModel> cadastraUsuario(@ModelAttribute UsuarioModel usuarioModel) {
-        return ResponseEntity.ok(usuarioService.cadastrarUsuario(usuarioModel));
+    public String cadastraUsuario(@ModelAttribute UsuarioModel usuarioModel, Model model) {
+        usuarioService.cadastrarUsuario(usuarioModel); // Chamada para o serviço para cadastrar o usuário
+        return "redirect:/usuarios/pesquisa"; // Redireciona para o método listarUsuarios
     }
 
-    @GetMapping("pesquisa")
+    @GetMapping("/pesquisa")
     public String listarUsuarios(Model model) {
         List<UsuarioModel> usuarios = usuarioService.buscarUsuario();
         model.addAttribute("usuarios", usuarios);
-        model.addAttribute("usuarioModel", new UsuarioModel());
+        model.addAttribute("usuarioModel", new UsuarioModel()); // Reinicia o formulário
         return "usuarioPage";
     }
 }

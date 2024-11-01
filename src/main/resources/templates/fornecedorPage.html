@@ -1,0 +1,69 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Fornecedores</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<h1>Cadastro de Fornecedores</h1>
+
+<form th:action="@{/fornecedores}" th:object="${fornecedorModel}" method="post">
+  <div class="form-group">
+    <label for="razaoSocial">Razão Social</label>
+    <input type="text" class="form-control" th:field="*{razaoSocial}" required>
+  </div>
+  <div class="form-group">
+    <label for="nomeFantasia">Nome Fantasia</label>
+    <input type="text" class="form-control" th:field="*{nomeFantasia}" required>
+  </div>
+  <div class="form-group">
+    <label for="cnpj">CNPJ</label>
+    <input type="text" class="form-control" th:field="*{cnpj}" required>
+  </div>
+  <div class="form-group">
+    <label for="inscricaoEstadual">Inscrição Estadual</label>
+    <input type="text" class="form-control" th:field="*{inscricaoEstadual}">
+  </div>
+  <div class="form-group">
+    <label for="estado">Estado</label>
+    <input type="text" class="form-control" th:field="*{estado}" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Salvar</button>
+</form>
+
+<h2>Fornecedores Cadastrados</h2>
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Razão Social</th>
+    <th>Nome Fantasia</th>
+    <th>CNPJ</th>
+    <th>Inscrição Estadual</th>
+    <th>Estado</th>
+    <th>Ações</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="fornecedor : ${fornecedores}">
+    <td th:text="${fornecedor.id}"></td>
+    <td th:text="${fornecedor.razaoSocial}"></td>
+    <td th:text="${fornecedor.nomeFantasia}"></td>
+    <td th:text="${fornecedor.cnpj}"></td>
+    <td th:text="${fornecedor.inscricaoEstadual}"></td>
+    <td th:text="${fornecedor.estado}"></td>
+    <td>
+      <a th:href="@{/fornecedores/{id}(id=${fornecedor.id})}" class="btn btn-warning btn-sm">Editar</a>
+      <form th:action="@{/fornecedores/{id}(id=${fornecedor.id})}" method="post" style="display:inline;">
+        <input type="hidden" name="_method" value="DELETE"/>
+        <button class="btn btn-danger btn-sm">Deletar</button>
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+</body>
+</html>

@@ -1,43 +1,49 @@
 package com.finan.orcamento.controller;
 
 import com.finan.orcamento.model.OrcamentoModel;
-import com.finan.orcamento.repositories.OrcamentoRepository;
+import com.finan.orcamento.model.UsuarioModel;
 import com.finan.orcamento.service.OrcamentoService;
+import com.finan.orcamento.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping(path="/orcamentos")
+@Controller
+@RequestMapping("/orcamentos")
 public class OrcamentoController {
+
     @Autowired
     private OrcamentoService orcamentoService;
+
     @Autowired
-    private OrcamentoRepository orcamentoRepository;
+    private UsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<List<OrcamentoModel>>buscaTodosOrcamentos(){
-        return ResponseEntity.ok(orcamentoService.buscarCadastro());
+    public String getOrcamentoPage(Model model) {
+        model.addAttribute("orcamentoModel", new OrcamentoModel());
+        List<UsuarioModel> usuarios = usuarioService.buscarUsuario();
+        model.addAttribute("usuarios", usuarios); // Passa a lista de usuários
+        return "orcamentoPage"; // Retorna a página de orçamento
     }
-    @GetMapping(path="/pesquisaid/{id}")
-    public ResponseEntity<OrcamentoModel>buscaPorId(@PathVariable Long id){
-        return ResponseEntity.ok().body(orcamentoService.buscaId(id));
-    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<OrcamentoModel>cadastraOrcamento(@RequestBody OrcamentoModel orcamentoModel){
-        return ResponseEntity.ok(orcamentoService.cadastrarOrcamento(orcamentoModel));
+    public String cadastraOrcamento(@ModelAttribute OrcamentoModel orcamentoModel, Model model) {
+        orcamentoService.cadastrarOrcamento(orcamentoModel); // Chamada para o serviço para cadastrar o orçamento
+        return "redirect:/orcamentos/pesquisa"; // Redireciona para a página de orçamentos
     }
-    @PostMapping(path="/put/{id}")
-    public ResponseEntity<OrcamentoModel>atualizaOrcamento(@RequestBody OrcamentoModel orcamentoModel, @PathVariable Long id){
-        OrcamentoModel orcamentoNewObj= orcamentoService.atualizaCadastro(orcamentoModel, id);
-        return ResponseEntity.ok().body(orcamentoNewObj);
-    }
-    @DeleteMapping(path="/delete/{id}")
-    public void deleteOrcamento(@PathVariable Long id){
-        orcamentoService.deletaOrcamento(id);
+
+    @GetMapping("/pesquisa")
+    public String listarOrcamentos(Model model) {
+        List<OrcamentoModel> orcamentos = orcamentoService.buscarCadastro();
+        model.addAttribute("orcamentos", orcamentos);
+        model.addAttribute("orcamentoModel", new OrcamentoModel()); // Reinicia o formulário
+        List<UsuarioModel> usuarios = usuarioService.buscarUsuario();
+        model.addAttribute("usuarios", usuarios); // Passa a lista de usuários
+        return "orcamentoPage"; // Retorna a página de orçamento
     }
 }

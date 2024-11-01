@@ -42,82 +42,29 @@
         button:hover {
             background-color: #7b1fa2;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #000000;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
     </style>
 </head>
 <body>
 <h1>Cadastro de Orçamentos</h1>
 <form id="orcamentoForm" th:action="@{/orcamentos}" th:object="${orcamentoModel}" method="post">
     <label>Valor do Orçamento</label>
-    <input type="number" th:field="*{valorOrcamento}" required step="0.01" min="0"/><br/>
+    <input type="number" id="valorOrcamento" th:field="*{valorOrcamento}" required><br>
 
-    <label>Estado do ICMS</label>
+    <label>ICMS</label>
     <select th:field="*{icmsEstados}" required>
-        <option value="">Selecione um estado</option>
+        <option value="" disabled selected>Selecione o ICMS</option>
         <option value="ICMS_MG">Minas Gerais</option>
         <option value="ICMS_SP">São Paulo</option>
         <option value="ICMS_RJ">Rio de Janeiro</option>
-    </select><br/>
+    </select><br>
 
-    <button id="salvarOrcamento" type="submit">Salvar</button>
+    <label>Usuário</label>
+    <select th:field="*{usuario.id}" required>
+        <option value="" disabled selected>Selecione o Usuário</option>
+        <option th:each="usuario : ${usuarios}" th:value="${usuario.id}" th:text="${usuario.nomeUsuario}"></option>
+    </select><br>
+
+    <button type="submit">Salvar</button>
 </form>
-
-<h2>Orçamentos Cadastrados</h2>
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Valor do Orçamento</th>
-        <th>ICMS</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="orcamento : ${orcamentos}">
-        <td th:text="${orcamento.id}"></td>
-        <td th:text="${orcamento.valorOrcamento}"></td>
-        <td th:text="${orcamento.valorICMS}"></td>
-    </tr>
-    </tbody>
-</table>
-
-<script>
-    document.getElementById("orcamentoForm").addEventListener("submit", function(event) {
-        event.preventDefault(); // Impede o envio padrão do formulário
-
-        var form = event.target;
-        var formData = new FormData(form);
-
-        fetch(form.action, {
-            method: form.method,
-            body: formData
-        }).then(response => {
-            if (response.ok) {
-                window.location.href = "/orcamentos"; // Redireciona após o sucesso
-                alert("Orçamento salvo com sucesso!");
-            } else {
-                console.error("Erro ao salvar o orçamento");
-                alert("Erro ao salvar o orçamento");
-            }
-        }).catch(error => {
-            console.error("Erro ao salvar o orçamento", error);
-            alert("Erro ao salvar o orçamento");
-        });
-    });
-</script>
 </body>
 </html>
